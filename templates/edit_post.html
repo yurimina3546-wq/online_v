@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 600px; margin: 50px auto; color: white; background: #222; padding: 30px; border-radius: 10px;">
+    <h2>စာမူပြင်ဆင်ရန်</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <div style="margin-bottom: 15px;">
+            <label>ခေါင်းစဉ်</label>
+            <input type="text" name="title" value="{{ post.title }}"
+                style="width: 100%; padding: 10px; background: #333; color: white; border: none; border-radius: 5px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>အကြောင်းအရာ</label>
+            <textarea name="content"
+                style="width: 100%; height: 150px; padding: 10px; background: #333; color: white; border: none; border-radius: 5px;">{{ post.content }}</textarea>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="color: white;">ပုံ သို့မဟုတ် ဗီဒီယို တင်ရန်:</label>
+            <input type="file" name="media_file" accept="image/*,video/*"
+                style="width: 100%; margin-top: 10px; color: #ccc;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>အမျိုးအစား (Category)</label>
+            <select name="category"
+                style="width: 100%; padding: 10px; background: #333; color: white; border: none; border-radius: 5px;">
+                {% for cat in ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi','Music'] %}
+                <option value="{{ cat }}" {{ 'selected' if post.category==cat else '' }}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit"
+            style="background: #e50914; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">ပြင်ဆင်မှုကို
+            သိမ်းမည်</button>
+    </form>
+</div>
+{% endblock %}

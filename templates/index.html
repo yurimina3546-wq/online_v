@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Movie Site</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    {% extends "base.html" %}
+    {% block content %}
+
+    <div style="margin-bottom: 30px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+        <a href="{{ url_for('index') }}" style="text-decoration: none; padding: 8px 18px; border-radius: 20px; 
+          background: {{ '#e50914' if not current_category else '#1a1a1a' }}; 
+          color: white; font-size: 0.9em; border: 1px solid #e50914;">
+            All Posts
+        </a>
+        {% for cat in ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi','Music'] %}
+        <a href="{{ url_for('index', category=cat) }}" style="text-decoration: none; padding: 8px 18px; border-radius: 20px; 
+          background: {{ '#e50914' if current_category == cat else '#1a1a1a' }}; 
+          color: white; font-size: 0.9em; border: 1px solid #e50914; transition: 0.3s;">
+            {{ cat }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <main style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+
+            {% for post in posts %}
+            <div class="movie-card"
+                style="background: #1a1a1a; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; transition: transform 0.3s;"
+                onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+
+                <a href="{{ url_for('post', post_id=post.id) }}"
+                    style="text-decoration: none; height: 180px; overflow: hidden; background: #000; display: block;">
+                    {% if post.media_file %}
+                    {% if post.media_file.lower().endswith(('.mp4', '.mov', '.webm')) %}
+                    <div
+                        style="display: flex; align-items: center; justify-content: center; height: 100%; color: #e50914; font-size: 3em; background: #111;">
+                        🎬
+                    </div>
+                    {% else %}
+                    <img src="{{ url_for('static', filename='uploads/' + post.media_file) }}"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                    {% endif %}
+                    {% else %}
+                    <div
+                        style="display: flex; align-items: center; justify-content: center; height: 100%; color: #444; font-size: 3em;">
+                        📷</div>
+                    {% endif %}
+                </a>
+
+                <div style="padding: 15px; flex-grow: 1; display: flex; flex-direction: column;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span
+                            style="background: #e50914; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7em; font-weight: bold; text-transform: uppercase;">
+                            {{ post.category }}
+                        </span>
+                        <small style="color: #666;">{{ post.date_posted.strftime('%d %b %Y') }}</small>
+                    </div>
+
+                    <h3
+                        style="margin: 0 0 8px 0; font-size: 1.1em; color: white; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ post.title }}
+                    </h3>
+
+                    <p
+                        style="color: #888; font-size: 0.85em; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 15px;">
+                        {{ post.content }}
+                    </p>
+
+                    <div
+                        style="margin-top: auto; display: flex; align-items: center; border-top: 1px solid #262626; padding-top: 10px;">
+                        <a href="{{ url_for('user_profile', username=post.author.username) }}"
+                            style="display: flex; align-items: center; text-decoration: none;">
+                            <img src="{{ url_for('static', filename='profile_pics/' + post.author.profile_pic) }}"
+                                style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
+                            <span style="color: #eee; font-size: 0.85em;">{{ post.author.username }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </main>
+
+    {% endblock %}
+
+</body>
+
+</html>

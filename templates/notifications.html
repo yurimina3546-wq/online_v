@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
+    <h3>အသိပေးချက်များ</h3>
+    {% for n in current_user.notifications|sort(attribute='timestamp', reverse=True) %}
+    <div
+        style="padding: 15px; border-bottom: 1px solid #333; background: {{ '#222' if not n.is_read else 'transparent' }};">
+        <a href="{{ url_for('post', post_id=n.post_id) }}" style="text-decoration: none; color: white;">
+            {{ n.message }} <br>
+            <small style="color: #888;">{{ n.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

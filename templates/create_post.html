@@ -1,0 +1,34 @@
+<div style="max-width: 600px; margin: 50px auto; color: white; background: #222; padding: 30px; border-radius: 10px;">
+    <h2>စာမူအသစ်ရေးရန်</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="ခေါင်းစဉ်" required
+            style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: none;">
+
+        <textarea name="content" placeholder="သင်ရေးချင်တဲ့အကြောင်းအရာ..." required rows="10"
+            style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: none;"></textarea>
+
+        <div style="margin-bottom: 20px;">
+            <label style="color: white;">ပုံ သို့မဟုတ် ဗီဒီယို တင်ရန်:</label>
+            <input type="file" name="media_file" accept="image/*,video/*"
+                style="width: 100%; margin-top: 10px; color: #ccc;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="color: white;">အမျိုးအစား ရွေးချယ်ပါ:</label>
+            <select name="category"
+                style="width: 100%; padding: 10px; border-radius: 5px; background: #333; color: white; border: none;">
+                <option value="Action">Action</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Drama">Drama</option>
+                <option value="Horror">Horror</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="music">music</option>
+            </select>
+        </div>
+
+        <button type="submit"
+            style="background: red; color: white; padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer;">
+            တင်မည် (Publish)
+        </button>
+    </form>
+</div>

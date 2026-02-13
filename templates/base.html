@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: sans-serif;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #141414;
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            color: #e50914;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.9em;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* base.html ရဲ့ <style> ထဲမှာ ပြင်ရန် */
+        .navbar {
+            position: fixed;
+            /* အပေါ်မှာ ကပ်ထားမယ် */
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            /* ကျန်တာတွေက အရင်အတိုင်းထားပါ */
+        }
+
+        body {
+            padding-top: 80px;
+            /* Navbar က အပေါ်ကနေ ဖုံးသွားမှာစိုးလို့ စာသားတွေကို အောက်နည်းနည်းချမယ် */
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="/" class="logo">MOVIE<span>HUB</span></a>
+        <div class="nav-center">
+            <div class="search-box" style="position: relative;">
+                <input type="text" name="search" placeholder="ရုပ်ရှင် သို့မဟုတ် စာမူရှာရန်..."
+                    style="padding: 8px 15px; border-radius: 20px; border: none; background: #333; color: white; width: 250px;">
+            </div>
+        </div>
+        <nav class="nav-links">
+            <div class="nav-links" style="display: flex; align-items: center; gap: 15px;">
+                <div style="position: relative;">
+                    <a href="{{ url_for('notifications') }}" style="text-decoration: none; color: white;">
+                        🔔 <span id="notif-count"
+                            style="background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; position: absolute; top: -10px; right: -10px;">
+                            {{ current_user.notifications|selectattr('is_read', 'equalto', False)|list|length }}
+                        </span>
+                    </a>
+                </div>
+                <a href="/edit_profile">Me</a>
+                <a href="/">Home</a>
+                <a href="/about">About Me</a>
+                {% if current_user.is_authenticated %}
+                <a href="/create_post" style="background: #e50914; padding: 8px 15px; border-radius: 5px;">Post</a>
+                <a href="/logout">Logout</a>
+                {% else %}
+                <a href="/login">Login</a>
+                {% endif %}
+            </div>
+
+        </nav>
+    </header>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Navbar ထဲက input ကို နာမည်နဲ့ သေသေချာချာ ဖမ်းမယ်
+        const searchInput = document.querySelector('input[name="search"]');
+        const searchBoxContainer = document.querySelector('.search-box');
+        const searchResults = document.createElement('div');
+
+        // Dropdown list အတွက် Style သတ်မှတ်ချက်
+        searchResults.id = "live-results";
+        searchResults.style = "position: absolute; top: 100%; left: 0; width: 100%; background: #222; border-radius: 0 0 10px 10px; z-index: 9999; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,0.5);";
+        searchBoxContainer.style.position = "relative";
+        searchBoxContainer.appendChild(searchResults);
+
+        searchInput.addEventListener('input', function () {
+            const q = this.value.trim();
+            if (q.length < 1) {
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            fetch(`/live_search?q=${q}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = ''; // အရင်ရလဒ်ဟောင်းတွေကို ရှင်းမယ်
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            const div = document.createElement('a');
+                            div.href = `/post/${item.id}`;
+                            div.style = "display: flex; align-items: center; padding: 12px; color: white; text-decoration: none; border-bottom: 1px solid #333; transition: 0.2s;";
+                            div.innerHTML = `
+                        <img src="${item.image}" style="width: 35px; height: 35px; border-radius: 4px; margin-right: 12px; object-fit: cover;">
+                        <span style="font-size: 0.9em;">${item.title}</span>
+                    `;
+                            div.onmouseover = () => div.style.background = "#e50914"; // Hover အရောင်
+                            div.onmouseout = () => div.style.background = "#222";
+                            searchResults.appendChild(div);
+                        });
+                    } else {
+                        searchResults.innerHTML = '<div style="padding: 10px; color: #888; font-size: 0.8em;">ရှာမတွေ့ပါ...</div>';
+                    }
+                });
+        });
+
+        // Search box ပြင်ပကို နှိပ်လိုက်ရင် ပျောက်သွားအောင်လုပ်မယ်
+        document.addEventListener('click', (e) => {
+            if (!searchBoxContainer.contains(e.target)) {
+                searchResults.innerHTML = '';
+            }
+        });
+    </script>
+</body>
+
+</html>
